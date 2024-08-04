@@ -1,13 +1,12 @@
 {
   "name": "mham-services",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "this is prokerage agency",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node src/index.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Anwar Ahmed",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.17.0",
@@ -20,5 +19,8 @@
   "devDependencies": {
     "@types/node": "^22.1.0",
     "ts-node": "^10.9.2"
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
