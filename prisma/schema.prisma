@@ -13,8 +13,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  name    String
-  
+model Customer {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  mobile String @unique
+  address String
 }
