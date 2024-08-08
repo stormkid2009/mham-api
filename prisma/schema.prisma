@@ -13,10 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Customer {
-  id String @id @default(uuid())
+// create Seller model for our database
+model Seller {
+  id String @id @default(cuid())
   name String
   email String @unique
   mobile String @unique
   address String
+  units Unit[]
+}
+
+// create Unit model with foreign key to associate it with Seller model [one to many relation ]
+model Unit {
+  id String @id @default(cuid())
+  location String
+  area Int
+  sold Boolean
+  owner Seller @relation(fields: [sellerId],references: [id])
+  sellerId String
+
 }

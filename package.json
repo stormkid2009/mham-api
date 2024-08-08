@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "description": "this is prokerage agency",
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "migrate": "prisma migrate dev --name init"
   },
   "keywords": [],
   "author": "Anwar Ahmed",
