@@ -4,8 +4,8 @@ import { deleteOneSeller, getAllSellers, registerSeller ,updateSeller} from "../
 const router = Router();
 
 router.get("/sellers", getAllSellers);
-router.post("/seller/register", registerSeller);
-router.put("/seller/update", updateSeller);
-router.delete("/seller/delete", deleteOneSeller);
+router.post("/sellers", registerSeller);
+router.put("/sellers/:id", updateSeller);
+router.delete("/sellers/:id", deleteOneSeller);
 
 export default router;

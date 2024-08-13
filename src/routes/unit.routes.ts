@@ -3,7 +3,7 @@ import { deleteOneUnit, getAllUnits, registerUnit, updateUnit } from "../control
 const router = Router();
 
 router.get("/units", getAllUnits);
-router.post("/unit/register", registerUnit);
-router.put("/unit/update", updateUnit);
-router.delete("/unit/delete", deleteOneUnit);
+router.post("/units", registerUnit);
+router.put("/units/:id", updateUnit);
+router.delete("/units/:id", deleteOneUnit);
 export default router;

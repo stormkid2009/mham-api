@@ -1,7 +1,14 @@
 import { Request, Response } from "express";
 import prisma from "../db/prisma.client";
 
-export const getAllSellers = async (req: Request, res: Response) => {
+/**
+ * Retrieves all sellers from the database and sends them as a JSON response.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @return {Promise<void>} A promise that resolves when the sellers are fetched and sent as a response.
+ */
+export const getAllSellers = async (req: Request, res: Response): Promise<void> => {
   try {
     const sellers = await prisma.seller.findMany();
     res.json(sellers);
@@ -10,38 +17,60 @@ export const getAllSellers = async (req: Request, res: Response) => {
   }
 };
 
-export const registerSeller = async (req: Request, res: Response) => {
+/**
+ * Registers a new seller in the database.
+ *
+ * @param {Request} req - The request object containing the seller's details.
+ * @param {Response} res - The response object to send the result back to the client.
+ * @return {Promise<void>} A promise that resolves when the seller is registered.
+ */
+export const registerSeller = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, mobile, address } = req.body;
     const result = await prisma.seller.create({
       data: { name, email, mobile, address },
     });
-    res.json(result);
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to register seller" });
   }
 };
 
-export const updateSeller = async (req: Request, res: Response) => {
+/**
+ * Updates a seller in the database.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @return {Promise<void>} A promise that resolves when the seller is updated.
+ */
+export const updateSeller = async (req: Request, res: Response): Promise<void> => {
+  const {id} = req.params;
   try {
-    const { id, name, email, mobile, address } = req.body;
+    const {  name, email, mobile, address } = req.body;
     const result = await prisma.seller.update({
       where: { id },
       data: { name, email, mobile, address },
     });
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to update seller" });
   }
 };
 
+/**
+ * Deletes a seller from the database.
+ *
+ * @param {Request} req - The request object containing the seller's ID.
+ * @param {Response} res - The response object to send the result back to the client.
+ * @return {Promise<void>} A promise that resolves when the seller is deleted.
+ */
 export const deleteOneSeller = async (req: Request, res: Response) => {
   try {
-    const { id } = req.body;
+    const {id} = req.params;
     const result = await prisma.seller.delete({
       where: { id },
     });
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to delete seller" });
   }

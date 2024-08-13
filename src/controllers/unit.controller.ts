@@ -15,7 +15,7 @@ export const getAllUnits = async (req: Request, res: Response): Promise<void> =>
         const units = await prisma.unit.findMany();
 
         // Send the units as a JSON response
-        res.json(units);
+        res.status(200).json(units);
     } catch (error) {
         // If an error occurs, send a JSON response with an error message
         res.status(500).json({ error: "Failed to fetch units" });
@@ -35,7 +35,7 @@ export const registerUnit = async (req: Request, res: Response): Promise<void> =
     const result = await prisma.unit.create({
       data: { location, area, sold, sellerId },
     });
-    res.json(result);
+    res.status(201).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to register unit" });
   }
@@ -48,14 +48,15 @@ export const registerUnit = async (req: Request, res: Response): Promise<void> =
  * @param {Response} res - The response object.
  * @return {Promise<void>} A promise that resolves when the unit is updated.
  */
-export const updateUnit = async (req: Request, res: Response) => {
+export const updateUnit = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
   try {
-    const { id, location, area, sold, sellerId } = req.body;
+    const { location, area, sold, sellerId } = req.body;
     const result = await prisma.unit.update({
       where: { id },
       data: { location, area, sold, sellerId },
     });
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to update unit" });
   }
@@ -68,13 +69,14 @@ export const updateUnit = async (req: Request, res: Response) => {
  * @param {Response} res - The response object.
  * @return {Promise<void>} A promise that resolves when the unit is deleted.
  */
-export const deleteOneUnit = async (req: Request, res: Response) => {
+export const deleteOneUnit = async (req: Request, res: Response): Promise<void> => {
+  
   try {
-    const { id } = req.body;
+    const { id } = req.params;
     const result = await prisma.unit.delete({
       where: { id },
     });
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ error: "Failed to delete unit" });
   }
