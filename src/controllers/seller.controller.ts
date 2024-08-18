@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import prisma from "../db/prisma.client";
+import { errorHandler } from "../middleware/errorHandler";
 
 /**
  * Retrieves all sellers from the database and sends them as a JSON response.
@@ -8,13 +9,15 @@ import prisma from "../db/prisma.client";
  * @param {Response} res - The response object.
  * @return {Promise<void>} A promise that resolves when the sellers are fetched and sent as a response.
  */
-export const getAllSellers = async (req: Request, res: Response): Promise<void> => {
+export const getAllSellers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const sellers = await prisma.seller.findMany();
     res.json(sellers);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch sellers" });
+    errorHandler(error, res, next);  // Use the custom error handler
   }
+   
+  
 };
 
 /**
@@ -24,15 +27,19 @@ export const getAllSellers = async (req: Request, res: Response): Promise<void> 
  * @param {Response} res - The response object to send the result back to the client.
  * @return {Promise<void>} A promise that resolves when the seller is fetched and sent as a response.
  */
-export const getSellerById = async (req: Request, res: Response): Promise<void> => {
+export const getSellerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
     const seller = await prisma.seller.findUnique({
       where: { id },
     });
+    if(!seller) {
+       res.status(404).json({ error: "Seller not found" });
+       return;
+    }
     res.status(200).json(seller);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch seller" });
+    errorHandler(error, res, next);  // Use the custom error handler
   }
 };
 
@@ -43,7 +50,7 @@ export const getSellerById = async (req: Request, res: Response): Promise<void> 
  * @param {Response} res - The response object to send the result back to the client.
  * @return {Promise<void>} A promise that resolves when the seller is registered.
  */
-export const registerSeller = async (req: Request, res: Response): Promise<void> => {
+export const registerSeller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { name, email, mobile, address } = req.body;
     const result = await prisma.seller.create({
@@ -51,7 +58,7 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
     });
     res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ error: "Failed to register seller" });
+    errorHandler(error, res, next);  // Use the custom error handler
   }
 };
 
@@ -62,7 +69,7 @@ export const registerSeller = async (req: Request, res: Response): Promise<void>
  * @param {Response} res - The response object.
  * @return {Promise<void>} A promise that resolves when the seller is updated.
  */
-export const updateSeller = async (req: Request, res: Response): Promise<void> => {
+export const updateSeller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const {id} = req.params;
   try {
     const {  name, email, mobile, address } = req.body;
@@ -72,7 +79,7 @@ export const updateSeller = async (req: Request, res: Response): Promise<void> =
     });
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: "Failed to update seller" });
+    errorHandler(error, res, next);  // Use the custom error handler
   }
 };
 
@@ -83,7 +90,7 @@ export const updateSeller = async (req: Request, res: Response): Promise<void> =
  * @param {Response} res - The response object to send the result back to the client.
  * @return {Promise<void>} A promise that resolves when the seller is deleted.
  */
-export const deleteOneSeller = async (req: Request, res: Response) => {
+export const deleteOneSeller = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const {id} = req.params;
     const result = await prisma.seller.delete({
@@ -91,6 +98,6 @@ export const deleteOneSeller = async (req: Request, res: Response) => {
     });
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: "Failed to delete seller" });
+    errorHandler(error, res, next);  // Use the custom error handler
   }
 };
