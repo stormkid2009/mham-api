@@ -18,6 +18,25 @@ export const getAllSellers = async (req: Request, res: Response): Promise<void> 
 };
 
 /**
+ * Retrieves a seller from the database by their ID and sends them as a JSON response.
+ *
+ * @param {Request} req - The request object containing the seller's ID.
+ * @param {Response} res - The response object to send the result back to the client.
+ * @return {Promise<void>} A promise that resolves when the seller is fetched and sent as a response.
+ */
+export const getSellerById = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const seller = await prisma.seller.findUnique({
+      where: { id },
+    });
+    res.status(200).json(seller);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch seller" });
+  }
+};
+
+/**
  * Registers a new seller in the database.
  *
  * @param {Request} req - The request object containing the seller's details.
