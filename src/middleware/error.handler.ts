@@ -1,4 +1,4 @@
-// src/middleware/errorHandler.ts
+// src/middleware/error.handler.ts
 
 import { Response, NextFunction } from "express";
 import { Prisma } from "@prisma/client";

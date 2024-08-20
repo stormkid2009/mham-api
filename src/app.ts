@@ -1,7 +1,7 @@
 import express,{Request, Response, NextFunction} from "express";
 import sellerRoutes from "./routes/seller.routes";
 import unitRoutes from "./routes/unit.routes";
-import { errorHandler } from "./middleware/errorHandler";
+import { errorHandler } from "./middleware/error.handler";
 
 const app = express();
 

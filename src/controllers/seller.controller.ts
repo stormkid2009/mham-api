@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../db/prisma.client";
-import { errorHandler } from "../middleware/errorHandler";
+import { handlePrismaOperation } from "../middleware/prisma.helper";
 
 /**
  * Retrieves all sellers from the database and sends them as a JSON response.
@@ -10,14 +10,7 @@ import { errorHandler } from "../middleware/errorHandler";
  * @return {Promise<void>} A promise that resolves when the sellers are fetched and sent as a response.
  */
 export const getAllSellers = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const sellers = await prisma.seller.findMany();
-    res.json(sellers);
-  } catch (error) {
-    errorHandler(error, res, next);  // Use the custom error handler
-  }
-   
-  
+  await handlePrismaOperation(() => prisma.seller.findMany(), res, next);
 };
 
 /**
@@ -28,19 +21,15 @@ export const getAllSellers = async (req: Request, res: Response, next: NextFunct
  * @return {Promise<void>} A promise that resolves when the seller is fetched and sent as a response.
  */
 export const getSellerById = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
+  await handlePrismaOperation(async () => {
     const { id } = req.params;
-    const seller = await prisma.seller.findUnique({
-      where: { id },
-    });
-    if(!seller) {
-       res.status(404).json({ error: "Seller not found" });
-       return;
+    const seller = await prisma.seller.findUnique({ where: { id } });
+    if (!seller) {
+      res.status(404).json({ error: "Seller not found" });
+      return null; // Prevent further processing
     }
-    res.status(200).json(seller);
-  } catch (error) {
-    errorHandler(error, res, next);  // Use the custom error handler
-  }
+    return seller;
+  }, res, next);
 };
 
 /**
@@ -51,15 +40,7 @@ export const getSellerById = async (req: Request, res: Response, next: NextFunct
  * @return {Promise<void>} A promise that resolves when the seller is registered.
  */
 export const registerSeller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { name, email, mobile, address } = req.body;
-    const result = await prisma.seller.create({
-      data: { name, email, mobile, address },
-    });
-    res.status(201).json(result);
-  } catch (error) {
-    errorHandler(error, res, next);  // Use the custom error handler
-  }
+  await handlePrismaOperation(() => prisma.seller.create({ data: req.body }), res, next);
 };
 
 /**
@@ -70,17 +51,7 @@ export const registerSeller = async (req: Request, res: Response, next: NextFunc
  * @return {Promise<void>} A promise that resolves when the seller is updated.
  */
 export const updateSeller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const {id} = req.params;
-  try {
-    const {  name, email, mobile, address } = req.body;
-    const result = await prisma.seller.update({
-      where: { id },
-      data: { name, email, mobile, address },
-    });
-    res.status(200).json(result);
-  } catch (error) {
-    errorHandler(error, res, next);  // Use the custom error handler
-  }
+  await handlePrismaOperation(() => prisma.seller.update({ where: { id: req.params.id }, data: req.body }), res, next);
 };
 
 /**
@@ -90,14 +61,6 @@ export const updateSeller = async (req: Request, res: Response, next: NextFuncti
  * @param {Response} res - The response object to send the result back to the client.
  * @return {Promise<void>} A promise that resolves when the seller is deleted.
  */
-export const deleteOneSeller = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const {id} = req.params;
-    const result = await prisma.seller.delete({
-      where: { id },
-    });
-    res.status(200).json(result);
-  } catch (error) {
-    errorHandler(error, res, next);  // Use the custom error handler
-  }
+export const deleteOneSeller = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  await handlePrismaOperation(() => prisma.seller.delete({ where: { id: req.params.id } }), res, next);
 };
