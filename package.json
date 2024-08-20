@@ -1,7 +1,7 @@
 {
   "name": "mham-services",
   "version": "1.0.0",
-  "description": "this is prokerage agency",
+  "description": "this is prokerage agency api services",
   "scripts": {
     "dev": "ts-node src/index.ts",
     "migrate": "prisma migrate dev --name init"
